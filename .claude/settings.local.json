@@ -9,5 +9,8 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "disabledMcpjsonServers": [
+    "task-master-ai"
+  ]
 }
