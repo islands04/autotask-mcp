@@ -136,7 +136,7 @@ describe('Decision Tree Router', () => {
 
   test('should route ticket search intent', async () => {
     const service = new AutotaskService(mockConfig, mockLogger);
-    jest.spyOn(service, 'searchCompanies').mockResolvedValue([{ id: 99, companyName: 'Acme Corp' }]);
+    jest.spyOn(service, 'searchCompanies').mockResolvedValue([{ id: 99, companyName: 'Acme Corp', ownerResourceID: 29682885 }]);
     const handler = new AutotaskToolHandler(service, mockLogger);
     const result = await handler.callTool('autotask_router', { intent: 'find tickets for Acme Corp' });
     const parsed = JSON.parse(result.content[0].text);
@@ -180,7 +180,7 @@ describe('Decision Tree Router', () => {
 
   test('tickets for Amaero resolves companyID via searchCompanies and never sets searchTerm', async () => {
     const service = new AutotaskService(mockConfig, mockLogger);
-    jest.spyOn(service, 'searchCompanies').mockResolvedValue([{ id: 296, companyName: 'Amaero' }]);
+    jest.spyOn(service, 'searchCompanies').mockResolvedValue([{ id: 296, companyName: 'Amaero', ownerResourceID: 29682885 }]);
     const handler = new AutotaskToolHandler(service, mockLogger);
     const result = await handler.callTool('autotask_router', { intent: 'tickets for Amaero' });
     const parsed = JSON.parse(result.content[0].text);

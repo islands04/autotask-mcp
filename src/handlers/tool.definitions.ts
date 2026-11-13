@@ -58,7 +58,7 @@ export const TOOL_DEFINITIONS: McpTool[] = [
   // Company tools
   {
     name: 'autotask_search_companies',
-    description: 'Search companies by name or status. Max 200/page.',
+    description: 'Search companies by name or status. Each result includes the account owner: ownerResourceID plus the resolved owner name. Max 200/page.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -121,7 +121,7 @@ export const TOOL_DEFINITIONS: McpTool[] = [
         },
         ownerResourceID: {
           type: 'number',
-          
+          description: 'Resource ID of the account owner'
         },
         isActive: {
           type: 'boolean',

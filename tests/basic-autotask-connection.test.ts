@@ -48,12 +48,14 @@ describe('Autotask Connection Tests', () => {
       companyName: 'Test Company',
       companyType: 1,
       isActive: true,
+      ownerResourceID: 29682885,
       createDate: '2023-01-01T00:00:00Z',
       lastModifiedDate: '2023-01-01T00:00:00Z'
     };
 
     expect(mockCompany.id).toBe(1);
     expect(mockCompany.companyName).toBe('Test Company');
+    expect(mockCompany.ownerResourceID).toBe(29682885);
     expect(typeof mockCompany.isActive).toBe('boolean');
   });
 

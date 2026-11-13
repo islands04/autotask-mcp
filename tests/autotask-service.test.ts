@@ -831,7 +831,7 @@ describe('AutotaskService', () => {
         const body = JSON.parse(init!.body as string);
         capturedMaxRecords = body.MaxRecords;
         return jsonResponse({
-          items: Array.from({ length: 25 }, (_, i) => ({ id: i + 1, companyName: `Co ${i + 1}` })),
+          items: Array.from({ length: 25 }, (_, i) => ({ id: i + 1, companyName: `Co ${i + 1}`, ownerResourceID: 29682885 })),
           pageDetails: { nextPageUrl: null },
         });
       });
@@ -859,6 +859,35 @@ describe('AutotaskService', () => {
 
       expect(capturedFilters).toContainEqual({ op: 'contains', field: 'companyName', value: 'Acme' });
       expect(capturedFilters).toContainEqual({ op: 'eq', field: 'isActive', value: true });
+    });
+
+    test('searchCompanies requests the full entity (no IncludeFields)', async () => {
+      // A field restriction here would silently strip ownerResourceID (the
+      // account owner) and any other field the tools rely on.
+      let capturedBody: any;
+      fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
+        capturedBody = JSON.parse(init!.body as string);
+        return jsonResponse({ items: [], pageDetails: { nextPageUrl: null } });
+      });
+
+      const service = new AutotaskService(configWithUrl, mockLogger);
+      await service.searchCompanies({ searchTerm: 'Acme' });
+
+      expect(capturedBody).not.toHaveProperty('IncludeFields');
+    });
+
+    test('searchCompanies passes ownerResourceID through from the API', async () => {
+      fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(async () =>
+        jsonResponse({
+          items: [{ id: 1, companyName: 'Co', ownerResourceID: 29682885 }],
+          pageDetails: { nextPageUrl: null },
+        })
+      );
+
+      const service = new AutotaskService(configWithUrl, mockLogger);
+      const [company] = await service.searchCompanies({ searchTerm: 'Co' });
+
+      expect(company.ownerResourceID).toBe(29682885);
     });
 
     test('searchCompanies honors page by slicing over http.query cursor pagination', async () => {
@@ -963,7 +992,7 @@ describe('AutotaskService', () => {
         calls.push({ method, url, body });
         if (url.endsWith('/Companies/query')) {
           return jsonResponse({
-            items: [{ id: 1, companyName: 'A' }],
+            items: [{ id: 1, companyName: 'A', ownerResourceID: 29682885 }],
             pageDetails: { nextPageUrl: `${BASE}/Companies/query/next?paging=abc` },
           });
         }
@@ -971,7 +1000,7 @@ describe('AutotaskService', () => {
         if (method !== 'POST') {
           return new Response('{"Message":"The requested resource does not support http method \'GET\'."}', { status: 405 });
         }
-        return jsonResponse({ items: [{ id: 2, companyName: 'B' }], pageDetails: { nextPageUrl: null } });
+        return jsonResponse({ items: [{ id: 2, companyName: 'B', ownerResourceID: 29682885 }], pageDetails: { nextPageUrl: null } });
       });
 
       const service = new AutotaskService(configWithUrl, mockLogger);
@@ -1066,7 +1095,7 @@ describe('AutotaskService', () => {
         const body = JSON.parse(init!.body as string);
         capturedMaxRecords = body.MaxRecords;
         return jsonResponse({
-          items: Array.from({ length: 25 }, (_, i) => ({ id: i + 1, companyName: `Co ${i + 1}` })),
+          items: Array.from({ length: 25 }, (_, i) => ({ id: i + 1, companyName: `Co ${i + 1}`, ownerResourceID: 29682885 })),
           pageDetails: { nextPageUrl: null },
         });
       });

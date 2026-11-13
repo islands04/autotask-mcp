@@ -6,7 +6,18 @@ import {
   extractTicketNumberPrefix,
   resolveCompanyId,
   type CompanySearcher,
+  type CompanySearchHit,
 } from '../src/handlers/intent-router';
+
+/**
+ * A Company row as searchCompanies returns it, including the account owner.
+ * CompanySearchHit only declares the fields the router reads, so build the
+ * full row first and return it as a hit (no excess-property error).
+ */
+function company(id: number, companyName: string): CompanySearchHit {
+  const row = { id, companyName, ownerResourceID: 29682885 };
+  return row;
+}
 
 const FIXED_NOW = new Date('2026-09-19T15:32:00Z');
 const TODAY = '2026-09-19';
@@ -49,15 +60,15 @@ describe('intent-router ticket search helpers', () => {
   test('resolveCompanyId uses a unique searchCompanies hit', async () => {
     const search: CompanySearcher = async (term) => {
       expect(term).toBe('Amaero');
-      return [{ id: 296, companyName: 'Amaero Additive' }];
+      return [company(296, 'Amaero Additive')];
     };
     await expect(resolveCompanyId('Amaero', search)).resolves.toBe(296);
   });
 
   test('resolveCompanyId prefers an exact name among multiple hits', async () => {
     const search: CompanySearcher = async () => [
-      { id: 1, companyName: 'Amaero Additive' },
-      { id: 2, companyName: 'Amaero' },
+      company(1, 'Amaero Additive'),
+      company(2, 'Amaero'),
     ];
     await expect(resolveCompanyId('Amaero', search)).resolves.toBe(2);
   });
@@ -65,8 +76,8 @@ describe('intent-router ticket search helpers', () => {
   test('resolveCompanyId returns undefined when the name cannot be uniquely resolved', async () => {
     const none: CompanySearcher = async () => [];
     const many: CompanySearcher = async () => [
-      { id: 1, companyName: 'Amaero Additive' },
-      { id: 2, companyName: 'Amaero Machining' },
+      company(1, 'Amaero Additive'),
+      company(2, 'Amaero Machining'),
     ];
     await expect(resolveCompanyId('Amaero', none)).resolves.toBeUndefined();
     await expect(resolveCompanyId('Amaero', many)).resolves.toBeUndefined();
@@ -100,7 +111,7 @@ describe('intent-router ticket search helpers', () => {
   test('tickets for Amaero → companyID from searchCompanies, never searchTerm', async () => {
     const search: CompanySearcher = async (term) => {
       expect(term).toBe('Amaero');
-      return [{ id: 296, companyName: 'Amaero' }];
+      return [company(296, 'Amaero')];
     };
     const route = await buildTicketSearchParams('tickets for Amaero', search, FIXED_NOW);
     expect(route.suggestedParams).toEqual({ companyID: 296 });

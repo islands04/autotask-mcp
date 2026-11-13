@@ -23,7 +23,9 @@ export interface CompactResponse {
  */
 const SUMMARY_FIELDS: Record<EntityType, string[]> = {
   tickets: ['id', 'ticketNumber', 'title', 'status', 'priority', 'companyID', 'assignedResourceID', 'assignedResourceRoleID', 'createDate', 'dueDateTime'],
-  companies: ['id', 'companyName', 'isActive', 'phone', 'city', 'state'],
+  // ownerResourceID is the account owner. Without it the model cannot answer
+  // "who owns company X?" and guesses from opportunity ownership instead.
+  companies: ['id', 'companyName', 'isActive', 'phone', 'city', 'state', 'ownerResourceID'],
   contacts: ['id', 'firstName', 'lastName', 'emailAddress', 'companyID'],
   projects: ['id', 'projectName', 'status', 'companyID', 'projectLeadResourceID', 'startDate', 'endDate'],
   tasks: ['id', 'title', 'status', 'projectID', 'assignedResourceID', 'percentComplete'],
@@ -56,6 +58,9 @@ function pickSummaryFields(item: Record<string, any>, entityType: EntityType): R
     }
     if (item._enhanced.resourceName) {
       compact.resourceName = item._enhanced.resourceName;
+    }
+    if (item._enhanced.ownerResourceName) {
+      compact.owner = item._enhanced.ownerResourceName;
     }
   }
 
