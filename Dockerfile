@@ -120,9 +120,10 @@ LABEL org.opencontainers.image.description="Model Context Protocol server for Ka
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.revision="${COMMIT_SHA}"
-# source and documentation point at the upstream project this image is built
-# from (Apache-2.0 attribution). url is where this image is published.
-LABEL org.opencontainers.image.source="https://github.com/WYRE-AI/autotask-mcp"
+# source is the fork this image is built from (a fork of
+# WYRE-AI/autotask-mcp, Apache-2.0). documentation still points at the
+# upstream README. url is where this image is published.
+LABEL org.opencontainers.image.source="https://github.com/islands04/autotask-mcp"
 LABEL org.opencontainers.image.documentation="https://github.com/WYRE-AI/autotask-mcp/blob/main/README.md"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/islands04/autotask-mcp"
 LABEL org.opencontainers.image.vendor="islands04"

@@ -145,7 +145,7 @@ These are now in the `Dockerfile` production stage (lines ~115-133). `documentat
 
 ```dockerfile
 LABEL maintainer="islands04"
-LABEL org.opencontainers.image.source="https://github.com/WYRE-AI/autotask-mcp"   # keep: upstream source (Apache-2.0 attribution)
+LABEL org.opencontainers.image.source="https://github.com/islands04/autotask-mcp"   # your fork (updated 2026-11-13)
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/islands04/autotask-mcp"
 LABEL org.opencontainers.image.vendor="islands04"
 # Remove: this image is not WYRE's MCP Registry entry
