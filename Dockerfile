@@ -112,7 +112,7 @@ ARG COMMIT_SHA="unknown"
 ARG BUILD_DATE="unknown"
 
 # Labels for metadata
-LABEL maintainer="engineering@wyre.ai"
+LABEL maintainer="islands04"
 LABEL version="${VERSION}"
 LABEL description="Autotask MCP Server - Model Context Protocol server for Kaseya Autotask PSA"
 LABEL org.opencontainers.image.title="autotask-mcp"
@@ -120,11 +120,14 @@ LABEL org.opencontainers.image.description="Model Context Protocol server for Ka
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.revision="${COMMIT_SHA}"
+# source and documentation point at the upstream project this image is built
+# from (Apache-2.0 attribution). url is where this image is published.
 LABEL org.opencontainers.image.source="https://github.com/WYRE-AI/autotask-mcp"
 LABEL org.opencontainers.image.documentation="https://github.com/WYRE-AI/autotask-mcp/blob/main/README.md"
-LABEL org.opencontainers.image.url="https://github.com/WYRE-AI/autotask-mcp/pkgs/container/autotask-mcp"
-LABEL org.opencontainers.image.vendor="Wyre Technology"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/islands04/autotask-mcp"
+LABEL org.opencontainers.image.vendor="islands04"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
-# MCP Registry ownership annotation (must match `name` in server.json)
-LABEL io.modelcontextprotocol.server.name="io.github.WYRE-AI/autotask-mcp"
+# No io.modelcontextprotocol.server.name label: that annotation claims the
+# upstream MCP Registry entry (io.github.WYRE-AI/autotask-mcp in server.json),
+# which this Docker Hub image is not.
