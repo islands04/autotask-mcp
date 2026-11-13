@@ -9,6 +9,7 @@ dist
 build
 
 # Development files
+env/
 .env
 .env.*
 !.env.example

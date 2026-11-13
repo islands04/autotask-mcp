@@ -5,7 +5,7 @@ FROM node:26-alpine AS builder
 ARG VERSION="unknown"
 ARG COMMIT_SHA="unknown"
 ARG BUILD_DATE="unknown"
-ARG GITHUB_TOKEN
+ARG GITHUB_TOKEN=""
 
 # node:22-alpine ships with npm 10.x — no need to install globally
 # Set working directory
@@ -107,9 +107,9 @@ VOLUME ["/app/logs"]
 CMD ["node", "dist/index.js"]
 
 # Build arguments for runtime
-ARG VERSION="unknown"
-ARG COMMIT_SHA="unknown" 
-ARG BUILD_DATE="unknown"
+ARG VERSION="1.0.1-ownerResourceID-fix"
+ARG COMMIT_SHA="62521679445a041b17ae1c2ee3500bf9ad73d5fc" 
+ARG BUILD_DATE="2026-11-13"
 
 # Labels for metadata
 LABEL maintainer="islands04"

@@ -11,6 +11,7 @@ test-stdout-clean.js
 node_modules/
 dist/
 build/
+env/
 .env
 .env.*
 !.env.example
