@@ -152,8 +152,8 @@ describe('getContractRecurringLines roll-up', () => {
     jest.spyOn(service, 'getFieldInfo').mockResolvedValue([PERIOD_TYPE_FIELD] as any);
     jest.spyOn(service, 'getCompany').mockImplementation(async (id: number) => (
       id === 29746549
-        ? { id, companyName: 'Advanced Industrial Coatings (AIC)' } as any
-        : { id, companyName: 'Microsoft' } as any
+        ? { id, companyName: 'Advanced Industrial Coatings (AIC)', ownerResourceID: 29682885 } as any
+        : { id, companyName: 'Microsoft', ownerResourceID: 29682885 } as any
     ));
     jest.spyOn(service, 'searchContractServiceBundles').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServiceBundleUnits').mockResolvedValue([] as any);
@@ -281,7 +281,7 @@ describe('getContractRecurringLines price basis', () => {
       id: 29747643, contractName: 'AIC - Cloud Services', companyID: 29746549,
     } as any);
     jest.spyOn(service, 'getFieldInfo').mockResolvedValue([PERIOD_TYPE_FIELD] as any);
-    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 1, companyName: 'Advanced Industrial Coatings (AIC)' } as any);
+    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 1, companyName: 'Advanced Industrial Coatings (AIC)', ownerResourceID: 29682885 } as any);
     jest.spyOn(service, 'searchContractServiceBundles').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServiceBundleUnits').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServices').mockResolvedValue(
@@ -321,7 +321,7 @@ describe('getContractRecurringLines price basis', () => {
     const service = new AutotaskService(mockConfig, mockLogger);
     jest.spyOn(service, 'getContract').mockResolvedValue({ id: 1, companyID: 2 } as any);
     jest.spyOn(service, 'getFieldInfo').mockResolvedValue([PERIOD_TYPE_FIELD] as any);
-    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X' } as any);
+    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X', ownerResourceID: 29682885 } as any);
     jest.spyOn(service, 'searchContractServiceBundles').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServiceBundleUnits').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServices').mockResolvedValue([{ id: 900, serviceID: 45, unitPrice: 23.10 }] as any);
@@ -343,7 +343,7 @@ describe('getContractRecurringLines price basis', () => {
     const service = new AutotaskService(mockConfig, mockLogger);
     jest.spyOn(service, 'getContract').mockResolvedValue({ id: 1, companyID: 2 } as any);
     jest.spyOn(service, 'getFieldInfo').mockResolvedValue([PERIOD_TYPE_FIELD] as any);
-    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X' } as any);
+    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X', ownerResourceID: 29682885 } as any);
     jest.spyOn(service, 'searchContractServiceBundles').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServiceBundleUnits').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServices').mockResolvedValue([{ id: 900, serviceID: 77 }] as any);
@@ -403,7 +403,7 @@ describe('servicePeriodLabels cache poisoning', () => {
     const service = new AutotaskService(mockConfig, mockLogger);
     jest.spyOn(service, 'getFieldInfo').mockImplementation(getFieldInfo as any);
     jest.spyOn(service, 'getContract').mockResolvedValue({ id: 1, companyID: 2 } as any);
-    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X' } as any);
+    jest.spyOn(service, 'getCompany').mockResolvedValue({ id: 2, companyName: 'X', ownerResourceID: 29682885 } as any);
     jest.spyOn(service, 'searchContractServiceBundles').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServiceBundleUnits').mockResolvedValue([] as any);
     jest.spyOn(service, 'searchContractServices').mockResolvedValue([{ id: 900, serviceID: 81, unitPrice: 264 }] as any);

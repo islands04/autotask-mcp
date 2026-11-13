@@ -113,15 +113,15 @@ describe('AutotaskHttpClient 401 retry (stale zone cache)', () => {
           ok: true,
           status: 200,
           headers: { get: () => null },
-          text: async () => JSON.stringify({ item: { id: 123, companyName: 'Acme' } }),
+          text: async () => JSON.stringify({ item: { id: 123, companyName: 'Acme', ownerResourceID: 29682885 } }),
         } as any);
       }
       throw new Error(`unexpected host in test: ${url}`);
     });
 
     try {
-      const result = await client.get<{ id: number; companyName: string }>('Companies', 123);
-      expect(result).toEqual({ id: 123, companyName: 'Acme' });
+      const result = await client.get<{ id: number; companyName: string; ownerResourceID: number }>('Companies', 123);
+      expect(result).toEqual({ id: 123, companyName: 'Acme', ownerResourceID: 29682885 });
       expect(zoneCalls).toBe(2);
     } finally {
       fetchMock.mockRestore();
@@ -199,15 +199,15 @@ describe('AutotaskHttpClient 401 retry (stale zone cache)', () => {
           ok: true,
           status: 200,
           headers: { get: () => null },
-          text: async () => JSON.stringify({ id: 123, companyName: 'Acme' }),
+          text: async () => JSON.stringify({ id: 123, companyName: 'Acme', ownerResourceID: 29682885 }),
         } as any);
       }
       throw new Error(`unexpected host in test: ${url}`);
     });
 
     try {
-      const result = await client.rawRequest<{ id: number; companyName: string }>('GET', '/Companies/123');
-      expect(result).toEqual({ id: 123, companyName: 'Acme' });
+      const result = await client.rawRequest<{ id: number; companyName: string; ownerResourceID: number }>('GET', '/Companies/123');
+      expect(result).toEqual({ id: 123, companyName: 'Acme', ownerResourceID: 29682885 });
       expect(zoneCalls).toBe(2);
     } finally {
       fetchMock.mockRestore();

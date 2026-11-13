@@ -18,8 +18,8 @@ function createMockAutotaskService(): jest.Mocked<AutotaskService> {
     // company cache pre-warm. searchCompanies (the tool-facing API) is no
     // longer consulted by MappingService — see refreshCompanyCache().
     listAllCompanies: jest.fn().mockResolvedValue([
-      { id: 1, companyName: 'Acme Corp' },
-      { id: 2, companyName: 'Widget Inc' },
+      { id: 1, companyName: 'Acme Corp', ownerResourceID: 29682885 },
+      { id: 2, companyName: 'Widget Inc', ownerResourceID: 29682885 },
     ]),
     searchCompanies: jest.fn(),
     searchResources: jest.fn().mockResolvedValue([
@@ -92,7 +92,7 @@ describe('MappingService', () => {
       // direct-get results aren't written back to the cache).
       (mockService as any).getCompany = jest
         .fn()
-        .mockResolvedValue({ id: 42, companyName: 'Lazy Lookup Co' });
+        .mockResolvedValue({ id: 42, companyName: 'Lazy Lookup Co', ownerResourceID: 29682885 });
       const instance = await MappingService.create(mockService, mockLogger, {
         lazyLoading: true,
       });
@@ -183,7 +183,7 @@ describe('MappingService', () => {
 
     it('should handle a single-page tenant cleanly', async () => {
       mockService.listAllCompanies.mockResolvedValueOnce([
-        { id: 1, companyName: 'Only Co' },
+        { id: 1, companyName: 'Only Co', ownerResourceID: 29682885 },
       ] as any);
 
       await MappingService.create(mockService, mockLogger);
@@ -196,11 +196,11 @@ describe('MappingService', () => {
       // Simulates the real-world bug: direct-get returns a stale/wrong name
       // that previously got written to cache and served to every subsequent caller.
       mockService.listAllCompanies.mockResolvedValueOnce([
-        { id: 1, companyName: 'Acme Corp' },
+        { id: 1, companyName: 'Acme Corp', ownerResourceID: 29682885 },
       ] as any);
       (mockService as any).getCompany = jest
         .fn()
-        .mockResolvedValue({ id: 207, companyName: 'Stale Name From Direct Get' });
+        .mockResolvedValue({ id: 207, companyName: 'Stale Name From Direct Get', ownerResourceID: 29682885 });
 
       const instance = await MappingService.create(mockService, mockLogger);
 

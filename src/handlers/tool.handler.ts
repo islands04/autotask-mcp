@@ -216,6 +216,12 @@ export class AutotaskToolHandler {
               if (name) result.lead = name;
             } catch { /* skip */ }
           }
+          if (item.ownerResourceID != null && typeof item.ownerResourceID === 'number') {
+            try {
+              const name = await mappingService.getResourceName(item.ownerResourceID);
+              if (name) result.owner = name;
+            } catch { /* skip */ }
+          }
           return result;
         }
       );

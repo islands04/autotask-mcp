@@ -617,7 +617,7 @@ Use autotask_list_categories to discover available tool categories, then autotas
 Use autotask_list_queues, autotask_list_ticket_statuses, or autotask_list_ticket_priorities to discover valid IDs before filtering. Use autotask_get_field_info for any entity's field definitions and picklist values.
 
 ## ID-to-Name Mapping:
-All search and detail tools automatically include human-readable names for company and resource IDs in an _enhanced field on each result.
+All search and detail tools automatically add human-readable names next to the IDs on each result: company (companyID), assignedTo (assignedResourceID), lead (projectLeadResourceID), and owner (ownerResourceID, the company's account owner).
 
 ## Authentication:
 This server requires valid Autotask API credentials. Ensure you have:

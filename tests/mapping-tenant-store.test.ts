@@ -25,13 +25,13 @@ const mockLogger = new Logger('error');
 function makeMockService(overrides: Partial<Record<string, jest.Mock>> = {}): jest.Mocked<AutotaskService> {
   return {
     listAllCompanies: jest.fn().mockResolvedValue([
-      { id: 1, companyName: 'Acme Corp' },
-      { id: 2, companyName: 'Widget Inc' },
+      { id: 1, companyName: 'Acme Corp', ownerResourceID: 29682885 },
+      { id: 2, companyName: 'Widget Inc', ownerResourceID: 29682885 },
     ]),
     searchResources: jest.fn().mockResolvedValue([
       { id: 10, firstName: 'John', lastName: 'Doe' },
     ]),
-    getCompany: jest.fn().mockResolvedValue({ id: 3, companyName: 'Direct-Fetched Co' }),
+    getCompany: jest.fn().mockResolvedValue({ id: 3, companyName: 'Direct-Fetched Co', ownerResourceID: 29682885 }),
     getResource: jest.fn().mockResolvedValue({ id: 10, firstName: 'John', lastName: 'Doe' }),
     ...overrides,
   } as unknown as jest.Mocked<AutotaskService>;
@@ -62,10 +62,10 @@ describe('per-tenant shared cache store', () => {
 
   it('never shares data across DIFFERENT tenants (2026-06-03 isolation invariant)', async () => {
     const svcA = makeMockService({
-      listAllCompanies: jest.fn().mockResolvedValue([{ id: 1, companyName: 'Tenant A Co' }]),
+      listAllCompanies: jest.fn().mockResolvedValue([{ id: 1, companyName: 'Tenant A Co', ownerResourceID: 29682885 }]),
     });
     const svcB = makeMockService({
-      listAllCompanies: jest.fn().mockResolvedValue([{ id: 1, companyName: 'Tenant B Co' }]),
+      listAllCompanies: jest.fn().mockResolvedValue([{ id: 1, companyName: 'Tenant B Co', ownerResourceID: 29682885 }]),
     });
 
     const a = await MappingService.create(svcA, mockLogger, { tenantKey: 'user@tenant-a.com' });
@@ -109,7 +109,7 @@ describe('bounded warm-up budget', () => {
     const svc = makeMockService({
       listAllCompanies: jest.fn().mockImplementation(hang),
       searchResources: jest.fn().mockImplementation(hang),
-      getCompany: jest.fn().mockResolvedValue({ id: 7, companyName: 'Directly Fetched Co' }),
+      getCompany: jest.fn().mockResolvedValue({ id: 7, companyName: 'Directly Fetched Co', ownerResourceID: 29682885 }),
     });
 
     const instance = await MappingService.create(svc, mockLogger, {
@@ -154,7 +154,7 @@ describe('bounded warm-up budget', () => {
     // The failure must not have marked companies as fresh: a subsequent
     // lookup should attempt the walk again (previously initializeCache
     // stamped lastUpdated unconditionally, pinning an empty cache for 30min).
-    failing.mockResolvedValue([{ id: 5, companyName: 'Recovered Co' }]);
+    failing.mockResolvedValue([{ id: 5, companyName: 'Recovered Co', ownerResourceID: 29682885 }]);
     expect(await instance.getCompanyName(5)).toBe('Recovered Co');
     expect(failing).toHaveBeenCalledTimes(2);
   });
