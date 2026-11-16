@@ -222,6 +222,7 @@ What the flags mean:
 | `--target production` | Build up to the final stage (it's the default anyway; this is explicit) |
 | `--build-arg GITHUB_TOKEN=…` | Lets `npm ci` fetch `autotask-node` from GitHub Packages |
 | `--build-arg VERSION=…` | The Dockerfile writes this into `package.json`, so `/health` and `serverInfo.version` report it |
+| `--build-arg UPSTREAM_SHA=…` | Records the upstream WYRE-AI commit this fork is based on, in the `io.github.islands04.upstream-revision` label |
 | `-t islands04/autotask-mcp:…` | **The tag that sends the push to your Docker Hub repo** |
 | `.` | Build context = current folder |
 

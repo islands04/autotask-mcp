@@ -1,72 +1,71 @@
 # Autotask MCP Server
 
-[![Build Status](https://github.com/WYRE-AI/autotask-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/WYRE-AI/autotask-mcp/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/WYRE-AI/autotask-mcp/graph/badge.svg)](https://codecov.io/gh/WYRE-AI/autotask-mcp)
+[![Docker Image Version](https://img.shields.io/docker/v/islands04/autotask-mcp?sort=semver)](https://hub.docker.com/r/islands04/autotask-mcp)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+
+> **This is a fork.** `islands04/autotask-mcp` is a fork of
+> [WYRE-AI/autotask-mcp](https://github.com/WYRE-AI/autotask-mcp), based on
+> upstream commit [`479bd1e`](https://github.com/WYRE-AI/autotask-mcp/commit/479bd1e).
+> It is not an official WYRE release. For upstream support, use the
+> [upstream issue tracker](https://github.com/WYRE-AI/autotask-mcp/issues).
+
+## How this fork differs from upstream
+
+| Area | Upstream (WYRE-AI) | This fork |
+|---|---|---|
+| Company account owner | `autotask_search_companies` drops `ownerResourceID`, so the model can't answer "who owns company X?" | Each company result includes `ownerResourceID` and the owner's name (`owner`). Any result carrying `ownerResourceID` (e.g. opportunities) also gets `owner`. See [docs/plan/company-owner-resource-id.md](docs/plan/company-owner-resource-id.md). |
+| Container image | `ghcr.io/wyre-ai/autotask-mcp` | `docker.io/islands04/autotask-mcp` ([Docker Hub](https://hub.docker.com/r/islands04/autotask-mcp)) |
+| MCP Registry | Listed as `io.github.WYRE-AI/autotask-mcp` | Not listed; the image doesn't claim the upstream entry |
+| Releases | semantic-release, MCPB bundle on GitHub Releases | Manual Docker Hub pushes ([docs/plan/docker-hub-publish.md](docs/plan/docker-hub-publish.md)); no MCPB bundle |
+| Extra docs | none | [docs/ONBOARDING_REPORT.md](docs/ONBOARDING_REPORT.md): an MCP + codebase guide for new contributors |
+
+**Not yet merged from upstream:** `3b1104c` (#377, impersonating the acting user's Autotask resource by email).
+
+To sync with upstream: `git fetch upstream`, then `git merge upstream/main`, and update the base commit and the line above.
 
 **Give your AI assistant direct access to Autotask.** Search tickets, create time entries, look up companies, manage projects — all through natural language. No more copy-pasting between browser tabs and chat windows.
 
-This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that connects Claude (or any MCP-compatible AI) to your Autotask PSA environment. Your AI assistant gets 101 tools covering the operations MSP teams use daily: ticket triage, time logging, company lookups, project management, billing review, and more.
+This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that connects Claude (or any MCP-compatible AI) to your Autotask PSA environment. Your AI assistant gets 110 tools covering the operations MSP teams use daily: ticket triage, time logging, company lookups, project management, billing review, and more.
 
 If you run an MSP on Autotask and you're tired of the context-switching tax, this is for you.
 
-> **Part of the [MSP Claude Plugins](https://github.com/WYRE-AI/msp-claude-plugins) ecosystem** — a growing suite of AI integrations for the MSP stack including [Datto RMM](https://github.com/WYRE-AI/datto-rmm-mcp), [IT Glue](https://github.com/WYRE-AI/itglue-mcp), [HaloPSA](https://github.com/WYRE-AI/halopsa-mcp), [ConnectWise Automate](https://github.com/WYRE-AI/connectwise-automate-mcp), [NinjaOne](https://github.com/WYRE-AI/ninjaone-mcp), [Huntress](https://github.com/WYRE-AI/huntress-mcp), and more. Built by MSPs, for MSPs.
+> **Upstream is part of the [MSP Claude Plugins](https://github.com/WYRE-AI/msp-claude-plugins) ecosystem** — a growing suite of AI integrations for the MSP stack including [Datto RMM](https://github.com/WYRE-AI/datto-rmm-mcp), [IT Glue](https://github.com/WYRE-AI/itglue-mcp), [HaloPSA](https://github.com/WYRE-AI/halopsa-mcp), [ConnectWise Automate](https://github.com/WYRE-AI/connectwise-automate-mcp), [NinjaOne](https://github.com/WYRE-AI/ninjaone-mcp), [Huntress](https://github.com/WYRE-AI/huntress-mcp), and more. Built by MSPs, for MSPs.
 
-<a href="https://glama.ai/mcp/servers/@wyre-ai/autotask-mcp">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@wyre-ai/autotask-mcp/badge" alt="Autotask MCP server" />
-</a>
-
-## One-Click Deployment
-
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/WYRE-AI/autotask-mcp/tree/main)
-
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/WYRE-AI/autotask-mcp)
-
-> **Note — no GitHub Packages token required.** Unlike most WYRE MCP servers,
-> `autotask-mcp` does **not** depend on a private `@wyre-ai/*` package on
-> GitHub Packages. Its only WYRE dependency is the `autotask-node` SDK, declared
-> as a git dependency on the **public** `WYRE-AI/autotask-node` repo, which
-> `npm install` resolves anonymously. The DigitalOcean one-click deploy therefore
-> works without any `NODE_AUTH_TOKEN`/`GITHUB_TOKEN` build variable.
+> **Building needs a GitHub Packages token.** The `autotask-node` SDK is a
+> devDependency installed from GitHub Packages (`@wyre-technology/autotask-node`),
+> so `npm ci` and `docker build` need a token with `read:packages`. Running the
+> published Docker image does not.
 
 ## Quick Start
 
-**Claude Desktop** — download, open, done:
-
-1. Download `autotask-mcp.mcpb` from the [latest release](https://github.com/WYRE-AI/autotask-mcp/releases/latest)
-2. Open the file (double-click or drag into Claude Desktop)
-3. Enter your Autotask credentials when prompted (Username, Secret, Integration Code)
-
-No terminal, no JSON editing, no Node.js install required.
-
-**Claude Code (CLI):**
+This fork is distributed as a Docker image. For **Claude Desktop** or **Claude Code** over stdio:
 
 ```bash
 claude mcp add autotask-mcp \
   -e AUTOTASK_USERNAME=your-user@company.com \
   -e AUTOTASK_SECRET=your-secret \
   -e AUTOTASK_INTEGRATION_CODE=your-code \
-  -- npx -y github:WYRE-AI/autotask-mcp
+  -- docker run --rm -i -e MCP_TRANSPORT=stdio -e AUTOTASK_USERNAME -e AUTOTASK_SECRET -e AUTOTASK_INTEGRATION_CODE --entrypoint node islands04/autotask-mcp:latest dist/entry.js
 ```
 
-See [Installation](#installation) for Docker and from-source methods.
+See [Installation](#installation) for the Claude Desktop JSON config, HTTP and from-source methods.
 
 ## Features
 
 - **🔌 MCP Protocol Compliance**: Full support for MCP resources and tools
 - **🎴 Interactive Ticket Card (MCP Apps)**: `autotask_get_ticket_details` renders as an interactive card in MCP Apps hosts (Claude Desktop/web) with an in-card "Add note" round-trip; neutral theme by default, brandable via `MCP_BRAND_*` env vars. In every host, the text the assistant reads carries the full ticket: description, contact, linked configuration item, custom fields (UDFs), recent notes and the complete record as JSON
-- **🛠️ Comprehensive API Coverage**: 101 tools spanning companies, contacts, tickets, projects, billing items, time entries, notes, attachments, and more
+- **🛠️ Comprehensive API Coverage**: 110 tools spanning companies, contacts, tickets, projects, billing items, time entries, notes, attachments, and more
 - **🔍 Advanced Search**: Powerful search capabilities with filters across all entities
 - **📝 CRUD Operations**: Create, read, update operations for core Autotask entities
-- **🔄 ID-to-Name Mapping**: Automatic resolution of company and resource IDs to human-readable names
+- **🔄 ID-to-Name Mapping**: Automatic resolution of company and resource IDs to human-readable names, including each company's account owner (this fork)
 - **⚡ Intelligent Caching**: Smart caching system for improved performance and reduced API calls
 - **🔒 Secure Authentication**: Enterprise-grade API security with Autotask credentials
 - **🌐 Dual Transport**: Supports both stdio (local) and HTTP Streamable (remote/Docker) transports
-- **📦 MCPB Packaging**: One-click installation via MCP Bundle for desktop clients
+- **📦 MCPB Packaging**: One-click installation via MCP Bundle for desktop clients (upstream releases only; this fork publishes no bundle)
 - **🐳 Docker Ready**: Containerized deployment with HTTP transport and health checks
 - **📊 Structured Logging**: Comprehensive logging with configurable levels and formats
-- **🧪 Test Coverage**: Comprehensive test suite with 80%+ coverage
+- **🧪 Test Coverage**: Comprehensive Jest test suite
 
 ## Table of Contents
 
@@ -88,23 +87,12 @@ See [Installation](#installation) for Docker and from-source methods.
 
 ## Installation
 
-### Option 1: MCPB Bundle (Claude Desktop)
+### Option 1: MCPB Bundle (upstream only)
 
-The simplest method — no terminal, no JSON editing, no Node.js install required.
-
-1. Download `autotask-mcp.mcpb` from the [latest release](https://github.com/WYRE-AI/autotask-mcp/releases/latest)
-2. Open the file (double-click or drag into Claude Desktop)
-3. Enter your Autotask credentials when prompted (Username, Secret, Integration Code)
-
-For **Claude Code (CLI)**, one command:
-
-```bash
-claude mcp add autotask-mcp \
-  -e AUTOTASK_USERNAME=your-user@company.com \
-  -e AUTOTASK_SECRET=your-secret \
-  -e AUTOTASK_INTEGRATION_CODE=your-code \
-  -- npx -y github:WYRE-AI/autotask-mcp
-```
+This fork does not publish an MCPB bundle. The bundle on
+[upstream's releases page](https://github.com/WYRE-AI/autotask-mcp/releases/latest)
+installs WYRE's build, which does **not** include this fork's changes. Use
+Docker (Option 2) or build from source (Option 3) to get them.
 
 ### Option 2: Docker
 
@@ -122,7 +110,7 @@ claude mcp add autotask-mcp \
         "-e", "AUTOTASK_SECRET=your-secret",
         "-e", "AUTOTASK_INTEGRATION_CODE=your-code",
         "--entrypoint", "node",
-        "ghcr.io/wyre-ai/autotask-mcp:latest",
+        "islands04/autotask-mcp:latest",
         "dist/entry.js"
       ]
     }
@@ -141,7 +129,7 @@ docker run -d \
   -e AUTOTASK_SECRET="your-secret" \
   -e AUTOTASK_INTEGRATION_CODE="your-code" \
   --restart unless-stopped \
-  ghcr.io/wyre-ai/autotask-mcp:latest
+  islands04/autotask-mcp:latest
 
 # Verify (health does not require X-Gateway-S2S)
 curl http://127.0.0.1:8080/health
@@ -160,7 +148,7 @@ docker run -d \
   -e CONDUIT_S2S_SECRET="your-real-s2s-secret" \
   -e AUTH_MODE=gateway \
   --restart unless-stopped \
-  ghcr.io/wyre-ai/autotask-mcp:latest
+  islands04/autotask-mcp:latest
 ```
 
 The gateway injects credentials via headers:
@@ -175,7 +163,7 @@ A `/mcp` request missing any of the three Autotask headers returns 401 and does 
 ### Option 3: From Source (Development)
 
 ```bash
-git clone https://github.com/WYRE-AI/autotask-mcp.git
+git clone https://github.com/islands04/autotask-mcp.git
 cd autotask-mcp
 npm ci && npm run build
 ```
@@ -398,10 +386,10 @@ Resources provide read-only access to Autotask data:
 
 ### Tools
 
-The server provides 101 tools for interacting with Autotask:
+The server provides 110 tools for interacting with Autotask:
 
 #### Company Operations
-- `autotask_search_companies` - Search companies with filters
+- `autotask_search_companies` - Search companies with filters. Each result includes the account owner (`ownerResourceID` + `owner` name) *(this fork)*
 - `autotask_create_company` - Create new company
 - `autotask_update_company` - Update existing company
 
@@ -498,24 +486,41 @@ The Autotask MCP server includes intelligent ID-to-name mapping that automatical
 
 ### Automatic Enhancement
 
-All search and detail tools automatically include an `_enhanced` field with resolved names:
+Search and detail results get human-readable names added inline, next to the IDs:
+
+| ID field | Added name field |
+|---|---|
+| `companyID` | `company` |
+| `assignedResourceID` | `assignedTo` |
+| `projectLeadResourceID` | `lead` |
+| `ownerResourceID` | `owner` *(this fork)* |
 
 ```json
 {
   "id": 12345,
   "title": "Sample Ticket",
   "companyID": 678,
+  "company": "Acme Corporation",
   "assignedResourceID": 90,
-  "_enhanced": {
-    "companyName": "Acme Corporation",
-    "assignedResourceName": "John Smith"
-  }
+  "assignedTo": "John Smith"
+}
+```
+
+A company search result carries its account owner:
+
+```json
+{
+  "id": 678,
+  "companyName": "Acme Corporation",
+  "isActive": true,
+  "ownerResourceID": 29682885,
+  "owner": "Jane Doe"
 }
 ```
 
 ### How It Works
 
-ID-to-name mapping is applied automatically to all search and detail tool results. No additional tools are needed — the `_enhanced` field is added transparently to every response that contains company or resource IDs.
+ID-to-name mapping is applied automatically to all search and detail tool results. No additional tools are needed. If a name can't be resolved, the ID is still returned and the name field is left out.
 
 ### Performance Features
 
@@ -553,13 +558,13 @@ Clients must send requests to `/mcp` with `Accept: application/json, text/event-
 
 The Docker image uses HTTP transport by default (port 8080) with a built-in health check.
 
-### Using Pre-built Image from GitHub Container Registry
+### Using the Pre-built Image from Docker Hub
 
 The Docker image defaults to **HTTP transport** on port 8080 — suitable for remote/server deployments where clients connect over the network.
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/wyre-ai/autotask-mcp:latest
+docker pull islands04/autotask-mcp:latest
 
 # Run container with HTTP transport (default). The image binds 0.0.0.0 inside
 # the container; publish on loopback and pass the S2S secret.
@@ -571,7 +576,7 @@ docker run -d \
   -e AUTOTASK_SECRET="your-secret-key" \
   -e AUTOTASK_INTEGRATION_CODE="your-integration-code" \
   --restart unless-stopped \
-  ghcr.io/wyre-ai/autotask-mcp:latest
+  islands04/autotask-mcp:latest
 
 # Verify it's running (health does not require X-Gateway-S2S)
 curl http://127.0.0.1:8080/health
@@ -589,7 +594,7 @@ For **stdio** usage with Claude Desktop, see [Installation Option 2](#option-2-d
 
 ```bash
 # Clone repository
-git clone https://github.com/WYRE-AI/autotask-mcp.git
+git clone https://github.com/islands04/autotask-mcp.git
 cd autotask-mcp
 
 # Create environment file
@@ -626,7 +631,7 @@ docker compose --profile dev up autotask-mcp-dev
 ### Setup
 
 ```bash
-git clone https://github.com/WYRE-AI/autotask-mcp.git
+git clone https://github.com/islands04/autotask-mcp.git
 cd autotask-mcp
 npm install
 ```
@@ -881,6 +886,14 @@ Additionally, Autotask limits **10,000 total requests per hour** across all inte
 
 This project is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
 
+### Modifications
+
+This fork modifies the original WYRE-AI/autotask-mcp source. Changed files:
+`src/utils/response.formatter.ts`, `src/handlers/tool.handler.ts`,
+`src/handlers/tool.definitions.ts`, `src/mcp/server.ts`, `Dockerfile`,
+`README.md`, and the tests listed in
+[docs/plan/company-owner-resource-id.md](docs/plan/company-owner-resource-id.md).
+
 ### Contributor License Agreement
 
 By submitting a pull request, you agree to the terms of our [Contributor License Agreement](CLA.md). This ensures that contributions can be properly licensed and that you have the right to submit the code.
@@ -894,9 +907,10 @@ By submitting a pull request, you agree to the terms of our [Contributor License
 
 ## Support
 
-- 📚 [Documentation](https://github.com/WYRE-AI/autotask-mcp/wiki)
-- 🐛 [Issue Tracker](https://github.com/WYRE-AI/autotask-mcp/issues)
-- 💬 [Discussions](https://github.com/WYRE-AI/autotask-mcp/discussions)
+- 🍴 Fork-specific issues (owner field, Docker Hub image): [islands04/autotask-mcp issues](https://github.com/islands04/autotask-mcp/issues)
+- 📚 Upstream [Documentation](https://github.com/WYRE-AI/autotask-mcp/wiki)
+- 🐛 Upstream [Issue Tracker](https://github.com/WYRE-AI/autotask-mcp/issues)
+- 💬 Upstream [Discussions](https://github.com/WYRE-AI/autotask-mcp/discussions)
 
 ## Acknowledgments
 
@@ -906,4 +920,4 @@ By submitting a pull request, you agree to the terms of our [Contributor License
 
 ---
 
-Built by [WYRE Technology](https://github.com/WYRE-AI) — part of the [MSP Claude Plugins](https://github.com/WYRE-AI/msp-claude-plugins) ecosystem 
+Originally built by [WYRE Technology](https://github.com/WYRE-AI) as part of the [MSP Claude Plugins](https://github.com/WYRE-AI/msp-claude-plugins) ecosystem. Fork maintained by [@islands04](https://github.com/islands04).
