@@ -169,6 +169,8 @@ Set the build values. The version is up to you; a suffix makes it clear this isn
 ```powershell
 $VERSION = "2.18.0-owner-fix.1"
 $SHA     = git rev-parse --short HEAD
+git fetch upstream
+$UPSTREAM = git merge-base HEAD upstream/main
 $DATE    = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 $env:GITHUB_TOKEN = gh auth token
 ```
@@ -176,7 +178,7 @@ $env:GITHUB_TOKEN = gh auth token
 Build. This creates the image locally and gives it two tags:
 
 ```powershell
-docker build --provenance=false --target production --build-arg GITHUB_TOKEN=$env:GITHUB_TOKEN --build-arg VERSION=$VERSION --build-arg COMMIT_SHA=$SHA --build-arg BUILD_DATE=$DATE -t islands04/autotask-mcp:$VERSION -t islands04/autotask-mcp:latest .
+docker build --provenance=false --target production --build-arg GITHUB_TOKEN=$env:GITHUB_TOKEN --build-arg VERSION=$VERSION --build-arg COMMIT_SHA=$SHA --build-arg BUILD_DATE=$DATE --build-arg UPSTREAM_SHA=$UPSTREAM -t islands04/autotask-mcp:$VERSION -t islands04/autotask-mcp:latest .
 ```
 
 What the flags mean:
@@ -187,6 +189,7 @@ What the flags mean:
 | `--target production` | Build up to the final stage (it's the default anyway; this is explicit) |
 | `--build-arg GITHUB_TOKEN=…` | Lets `npm ci` fetch `autotask-node` from GitHub Packages |
 | `--build-arg VERSION=…` | The Dockerfile writes this into `package.json`, so `/health` and `serverInfo.version` report it |
+| `--build-arg UPSTREAM_SHA=…` | Records the upstream WYRE-AI commit this fork is based on, in the `io.github.islands04.upstream-revision` label |
 | `-t islands04/autotask-mcp:…` | **The tag that sends the push to your Docker Hub repo** |
 | `.` | Build context = current folder |
 
@@ -297,7 +300,7 @@ docker buildx create --name multi --use
 ```
 
 ```powershell
-docker buildx build --platform linux/amd64,linux/arm64 --provenance=false --build-arg GITHUB_TOKEN=$env:GITHUB_TOKEN --build-arg VERSION=$VERSION --build-arg COMMIT_SHA=$SHA --build-arg BUILD_DATE=$DATE -t islands04/autotask-mcp:$VERSION -t islands04/autotask-mcp:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64 --provenance=false --build-arg GITHUB_TOKEN=$env:GITHUB_TOKEN --build-arg VERSION=$VERSION --build-arg COMMIT_SHA=$SHA --build-arg BUILD_DATE=$DATE --build-arg UPSTREAM_SHA=$UPSTREAM -t islands04/autotask-mcp:$VERSION -t islands04/autotask-mcp:latest --push .
 ```
 
 (Set `$env:GITHUB_TOKEN` again first, and remove it afterwards.) `--push` uploads straight to Docker Hub. Multi-arch images can't be loaded into the local image list, so test with `docker pull` + `docker run` afterwards.

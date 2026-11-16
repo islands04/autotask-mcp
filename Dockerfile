@@ -15,7 +15,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies (--ignore-scripts prevents 'prepare' from running before source is copied)
-# GitHub Packages auth for @wyre-ai scope (autotask-node is consumed via the registry)
+# GitHub Packages auth for npm.pkg.github.com (the autotask-node devDependency
+# is the @wyre-technology/autotask-node package; the token covers the whole host)
 RUN echo "@wyre-ai:registry=https://npm.pkg.github.com" > .npmrc && \
     echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc && \
     npm ci --ignore-scripts && rm -f .npmrc
@@ -110,24 +111,29 @@ CMD ["node", "dist/index.js"]
 ARG VERSION="unknown"
 ARG COMMIT_SHA="unknown" 
 ARG BUILD_DATE="unknown"
+# Upstream WYRE-AI commit this fork is based on (git merge-base HEAD upstream/main)
+ARG UPSTREAM_SHA="unknown"
 
 # Labels for metadata
 LABEL maintainer="islands04"
 LABEL version="${VERSION}"
-LABEL description="Autotask MCP Server - Model Context Protocol server for Kaseya Autotask PSA"
+LABEL description="Autotask MCP Server (islands04 fork of WYRE-AI/autotask-mcp) - adds company account owner to search results"
 LABEL org.opencontainers.image.title="autotask-mcp"
-LABEL org.opencontainers.image.description="Model Context Protocol server for Kaseya Autotask PSA integration"
+LABEL org.opencontainers.image.description="Fork of WYRE-AI/autotask-mcp. Company search returns ownerResourceID and the owner's name. See the fork README for all differences."
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.revision="${COMMIT_SHA}"
 # source is the fork this image is built from (a fork of
-# WYRE-AI/autotask-mcp, Apache-2.0). documentation still points at the
-# upstream README. url is where this image is published.
+# WYRE-AI/autotask-mcp, Apache-2.0). documentation is the fork README, which
+# lists how the fork differs. url is where this image is published.
 LABEL org.opencontainers.image.source="https://github.com/islands04/autotask-mcp"
-LABEL org.opencontainers.image.documentation="https://github.com/WYRE-AI/autotask-mcp/blob/main/README.md"
+LABEL org.opencontainers.image.documentation="https://github.com/islands04/autotask-mcp/blob/main/README.md"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/islands04/autotask-mcp"
 LABEL org.opencontainers.image.vendor="islands04"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
+# No OCI key for "forked from", so these use the maintainer's own namespace.
+LABEL io.github.islands04.fork-of="https://github.com/WYRE-AI/autotask-mcp"
+LABEL io.github.islands04.upstream-revision="${UPSTREAM_SHA}"
 
 # No io.modelcontextprotocol.server.name label: that annotation claims the
 # upstream MCP Registry entry (io.github.WYRE-AI/autotask-mcp in server.json),
